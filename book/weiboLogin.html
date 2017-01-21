@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style type="text/css">
+		body{
+	 			background:url('images/bg.png');
+		}
+		#UserExistsMessage{
+			margin:10px;
+			padding:10px;
+			width:auto;
+			border:1px solid pink;
+			display:none;
+			border-radius:10px;
+			white-space:nowrap;
+		}	
+		input,button,select,textarea{outline:none}
+		textarea{resize:none}
+		form{
+			width:360px;
+			margin:20px auto;
+		}
+		input{
+			margin:10px;
+			font:20px/30px 楷体;
+			border-radius:5px;
+		}
+		span{
+			display:inline-block;
+			width:66px;
+		}
+		.login{
+			display:inline-block;
+			position: relative;
+			padding:10px 15px;
+			border:1px solid #99D3F5;
+			border-radius:5px;
+			text-decoration:none;
+			background: #D0EEFF;
+			color: #1E88C7;
+			margin:10px 138px 0 10px;
+			float: right;
+			cursor:pointer;
+		}
+		.login input{
+			margin:0;
+			position:absolute;
+			top:0;
+			left:0;
+			opacity:0;
+			cursor:pointer;
+		}
+		.login:hover {
+		    background: #AADFFD;
+		    border-color: #78C3F3;
+		    color: #004974;
+		    text-decoration: none;
+		}
+	</style>
+	<script type="text/javascript" src="js/jquery-3.1.1.min.js"></script>
+	<script>
+	//用户名是否存在
+	var userExists = false;
+	$(function(){
+		$("#password").blur(function(){
+			var username = $("#username").val();
+			var password = $("#password").val();
+			$.ajax({
+				url:"judge.php",
+				type:"post",
+				data:{"username": username,"password": password},
+				success:function(data){
+					$("#UserExistsMessage").show();
+					if(data.code=="0"){
+						$("#UserExistsMessage").css({color:"red"});
+						userExists = false;
+					}else{
+						$("#UserExistsMessage").css({color:"green"});
+						userExists = true;
+					}
+					$("#UserExistsMessage").html(data.message);
+				},
+				dataType:"json"
+				
+			});
+		});
+	});
+	//验证是否能提交
+	function checkData(){
+		if(userExists){
+			return true;
+		}else{
+			return false;
+		}
+	}
+</script>
+</head>
+<body>
+	<form action="pagedBookList.php" method="post" onsubmit="return checkData()">
+		<input type="text" name="username" id="username">
+		<input type="password" name="password"  id="password">
+		<span id="UserExistsMessage"></span>
+		<a class="login" href="javascript:void(0);">登陆
+			<input type="submit" value="登陆">
+		</a>
+		<a href="register.php">
+			去注册页面
+		</a>
+	</form>
+</body>
+</html>
